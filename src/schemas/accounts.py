@@ -48,3 +48,8 @@ class TokenRefreshRequestSchema(BaseModel):
 
 class TokenRefreshResponseSchema(BaseModel):
     access_token: str
+
+
+class UserRegistrationResponseSchema(BaseModel):
+    id: int
+    email: str
