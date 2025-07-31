@@ -307,6 +307,7 @@ async def refresh_access_token(
     data: TokenRefreshRequestSchema,
     db: AsyncSession = Depends(get_db),
     jwt_manager: JWTAuthManagerInterface = Depends(get_jwt_auth_manager),
+    settings: BaseAppSettings = Depends(get_settings),
 ):
     try:
         payload = jwt_manager.decode_refresh_token(data.refresh_token)
@@ -336,6 +337,9 @@ async def refresh_access_token(
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found."
         )
 
-    new_access_token = jwt_manager.create_access_token(subject=str(user.id))
+    new_access_token = jwt_manager.create_access_token(
+        subject=str(user.id),
+        expires_delta=timedelta(days=settings.LOGIN_TIME_DAYS)
+    )
 
     return TokenRefreshResponseSchema(access_token=new_access_token)
